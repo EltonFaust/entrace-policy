@@ -25,8 +25,8 @@ export class MyApp {
         private bgMode: BackgroundMode
     ) {
         this.platform.ready().then(() => {
-            statusBar.styleDefault();
-            splashScreen.hide();
+            this.statusBar.styleDefault();
+            this.splashScreen.hide();
 
             this.bgMode.enable();
 

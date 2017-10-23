@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-// import { NavController } from 'ionic-angular';
+import { NavController } from 'ionic-angular';
 
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 
@@ -14,7 +14,8 @@ export class HomePage {
 
     public constructor(
         private appController: AppControllerService,
-        private formBuilder: FormBuilder
+        private formBuilder: FormBuilder,
+        private nav: NavController
     ) {
         this.appController.getStored('service_url', (service_url: any) => {
             this.initialForm = this.formBuilder.group({
@@ -25,12 +26,11 @@ export class HomePage {
                     ]
                 ],
             });
-        }, '');
+        }, 'ws://192.168.1.2:3000');
     }
 
     public submitForm(): void {
-        this.appController.setStored('service_url', this.initialForm.value.service_url, false, () => {
-            console.log(this.initialForm.value.service_url)
-        });
+        this.appController.setSocketUrl(this.initialForm.value.service_url);
+        this.nav.setRoot('ListOfOccurrencesPage');
     }
 }
