@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { IonicPage } from 'ionic-angular';
 
 import { AppControllerService } from '../../services/app-controller-service';
 
-@IonicPage()
 @Component({
     selector: 'page-list-of-occurrences',
     templateUrl: 'list-of-occurrences.html',

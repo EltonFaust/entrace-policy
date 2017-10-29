@@ -1,0 +1,22 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>Lista de entradas</ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content>
+    <ion-list *ngIf="entracesList">
+        <ion-item *ngFor="let entrace of entracesList">
+            <h2>{{ entrace.name }}</h2>
+            <p>{{ entrace.id }}</p>
+
+            <button [hidden]="isJoinedEntrace(entrace.id)" ion-button clear item-end (click)="joinEntrace(entrace.id)">
+                <ion-icon name="add"></ion-icon>
+            </button>
+
+            <button [hidden]="!isJoinedEntrace(entrace.id)" ion-button clear item-end (click)="leaveEntrace(entrace.id)">
+                <ion-icon name="close"></ion-icon>
+            </button>
+        </ion-item>
+    </ion-list>
+</ion-content>

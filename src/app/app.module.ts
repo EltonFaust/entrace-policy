@@ -9,12 +9,18 @@ import { NativeStorage } from '@ionic-native/native-storage';
 import { AppControllerService } from '../services/app-controller-service';
 
 import { MyApp } from './app.component';
-import { HomePage } from '../pages/home/home';
+import { ListOfEntracesPage } from '../pages/list-of-entraces/list-of-entraces';
+import { ListOfOccurrencesPage } from '../pages/list-of-occurrences/list-of-occurrences';
+import { TabsPage } from '../pages/tabs/tabs';
+import { SettingsPage } from '../pages/settings/settings';
 
 @NgModule({
     declarations: [
         MyApp,
-        HomePage
+        SettingsPage,
+        ListOfEntracesPage,
+        ListOfOccurrencesPage,
+        TabsPage
     ],
     imports: [
         BrowserModule,
@@ -23,7 +29,10 @@ import { HomePage } from '../pages/home/home';
     bootstrap: [IonicApp],
     entryComponents: [
         MyApp,
-        HomePage
+        SettingsPage,
+        ListOfEntracesPage,
+        ListOfOccurrencesPage,
+        TabsPage
     ],
     providers: [
         {provide: ErrorHandler, useClass: IonicErrorHandler},

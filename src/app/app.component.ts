@@ -1,20 +1,20 @@
 import { Component, ViewChild } from '@angular/core';
-import { Platform, Nav } from 'ionic-angular';
+import { Platform} from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { BackgroundMode } from '@ionic-native/background-mode';
 
 // import { AppControllerService } from '../services/app-controller-service';
 
-import { HomePage } from '../pages/home/home';
+// import { HomePage } from '../pages/home/home';
+import { TabsPage } from '../pages/tabs/tabs';
 
 @Component({
     templateUrl: 'app.html'
 })
 export class MyApp {
-    @ViewChild(Nav) nav: Nav;
-
-    public rootPage:any = HomePage;
+    public rootPage:any = TabsPage;
+    // public rootPage:any = HomePage;
 
     private isBackActivated = false;
 

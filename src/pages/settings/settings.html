@@ -1,0 +1,32 @@
+<ion-header>
+    <ion-navbar>
+        <ion-title>
+            Configurações para acesso
+        </ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+    <form *ngIf="initialForm" [formGroup]="initialForm">
+        <ion-item>
+            <ion-label floating>URL WS</ion-label>
+            <ion-input type="text" formControlName="service_url"></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-label floating>ID usuário</ion-label>
+            <ion-input type="text" formControlName="user_id"></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-label floating>Nome usuário</ion-label>
+            <ion-input type="text" formControlName="user_name"></ion-input>
+        </ion-item>
+
+        <p style="color: #ff0000;text-align: center;">{{ socketError }}</p>
+
+        <button [disabled]="isSendingForm" ion-button block large class="bg-color-2 color-1" [disabled]="!initialForm || !initialForm.valid" (click)="submitForm()">
+            Salvar / Conectar
+        </button>
+    </form>
+</ion-content>
