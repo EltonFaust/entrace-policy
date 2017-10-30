@@ -9,7 +9,7 @@
 <ion-content padding>
     <form *ngIf="initialForm" [formGroup]="initialForm">
         <ion-item>
-            <ion-label floating>URL WS</ion-label>
+            <ion-label floating>Endereço serviço</ion-label>
             <ion-input type="text" formControlName="service_url"></ion-input>
         </ion-item>
 
@@ -26,7 +26,7 @@
         <p style="color: #ff0000;text-align: center;">{{ socketError }}</p>
 
         <button [disabled]="isSendingForm" ion-button block large class="bg-color-2 color-1" [disabled]="!initialForm || !initialForm.valid" (click)="submitForm()">
-            Salvar / Conectar
+            Conectar
         </button>
     </form>
 </ion-content>

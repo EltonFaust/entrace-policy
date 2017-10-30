@@ -1,3 +1,11 @@
 page-new-occurrence {
+    .image-compare-block {
+        overflow: hidden;
 
+        .image-item {
+            float: left;
+            width: 50%;
+            height: 200px;
+        }
+    }
 }

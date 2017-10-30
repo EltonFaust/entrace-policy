@@ -1,9 +1,9 @@
 import { Injectable /*, NgZone*/ } from '@angular/core';
 import { Platform, Events } from 'ionic-angular';
 
-import { Observable } from 'rxjs/Rx';
+import { Observable, Observer } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
-import * as WS from 'ws';
+// import * as WS from 'ws';
 
 import { NativeStorage } from '@ionic-native/native-storage';
 
@@ -12,11 +12,13 @@ export class AppControllerService {
     private isDevicePlatform: boolean;
     private bindStoreChange: {[bindKey: string]: (data) => any};
 
-    private socketUrl: string;
-    private socketHandle: WS;
+    private serviceUrl: string;
+    // private socketHandle: WS;
+    private socketHandle: WebSocket;
 
     private user: {id: string, name: string};
     private entraces: Array<any>;
+    private occurrences: Array<any>;
     private watchingEntraces: Array<any>;
 
     private requestPromises: {[id: string]: Promise<any>};
@@ -33,18 +35,19 @@ export class AppControllerService {
 
         this.user = {id: '#unknown#', name: 'Unknown'};
         this.entraces = new Array<any>();
+        this.occurrences = new Array<any>();
         this.watchingEntraces = new Array<string>();
+
         this.requestPromises = {};
         this.requestObservers = {};
     }
 
-    public isDefinedSocketUrl(): boolean {
-        return !!this.socketUrl;
+    public isDefinedServiceUrl(): boolean {
+        return !!this.serviceUrl;
     }
 
-    public setSocketUrl(url: string): void {
-        this.socketUrl = url;
-        this.setStored('service_url', url, false);
+    public setServiceUrl(url: string): void {
+        this.serviceUrl = url;
     }
 
     public setCurrentUser(user: any): void {
@@ -53,7 +56,7 @@ export class AppControllerService {
 
     public checkSocketConnection(): Promise<any> {
         return new Promise<any>((resolve: () => any, reject: (reason: string) => any) => {
-            if (!this.socketUrl) {
+            if (!this.serviceUrl) {
                 reject('Socket url not defined');
                 return;
             }
@@ -63,32 +66,33 @@ export class AppControllerService {
                 return;
             }
 
-            this.socketHandle = new WS(this.socketUrl);
+            // this.socketHandle = new WS(this.serviceUrl);
 
-            this.socketHandle.on('error', (e: Error) => {
-                reject('Error "' + e.message + '" occoured while trying to connect to connect to "' + this.socketUrl + '"');
+            this.socketHandle = new WebSocket('ws://' + this.serviceUrl);
+
+            this.socketHandle.onerror = (e) => {
+                reject('Error "' + e + '" occoured while trying to connect to connect to "' + this.serviceUrl + '"');
                 // this.socketHandle.terminate();
                 this.socketHandle = null;
-            });
+            }
 
-            this.socketHandle.on('open', () => {
+            this.socketHandle.onopen = () => {
                 this.sendMessageToSocket('identify_as', {name: this.user.name});
                 resolve();
-            });
+            };
 
-            this.socketHandle.on('message', (message: string) => {
-                let data = JSON.parse(message);
+            this.socketHandle.onmessage = (message) => {
+                let data = JSON.parse(message.data);
 
-                console.log(data);
+                console.log(message);
                 this.events.publish('socket-message:' + data.type, data);
-            });
-
+            }
         });
     }
 
     public disconnectSocket(): void {
         if (this.socketHandle) {
-            this.socketHandle.terminate();
+            this.socketHandle.close();
             this.socketHandle = null;
         }
     }
@@ -97,7 +101,10 @@ export class AppControllerService {
         try {
             data = data || {};
             data.type = type;
+            data.user_id = this.user.id;
             data = JSON.stringify(data);
+
+            console.log('Sending data: %s', data);
 
             this.socketHandle.send(data);
         } catch(e) {
@@ -125,11 +132,41 @@ export class AppControllerService {
 
         return this.requestPromises['list_entraces'] = new Promise<Array<any>>((resolve: (data: Array<any>) => any) => {
             this.events.subscribe('socket-message:list_of_entraces', (data: any) => {
+                this.entraces = data.list;
                 resolve(data.list);
                 this.events.unsubscribe('socket-message:list_of_entraces');
             });
 
             this.sendMessageToSocket('list_entraces');
+        });
+    }
+
+    public requireListOfOccurrences(): Promise<Array<any>> {
+        if (!!this.requestPromises['list_occurrences']) {
+            return this.requestPromises['list_entraces'];
+        }
+
+        return this.requestPromises['list_occurrences'] = new Promise<Array<any>>((resolve: (data: Array<any>) => any) => {
+            this.events.subscribe('socket-message:list_of_occurrences', (data: any) => {
+                this.occurrences = data.list;
+                resolve(data.list);
+                this.events.unsubscribe('socket-message:list_of_occurrences');
+            });
+
+            this.sendMessageToSocket('list_occurrences');
+        });
+    }
+
+    public watchForNewOccurrences(): Observable<any> {
+        if (!!this.requestObservers['new_occurrence']) {
+            return this.requestObservers['new_occurrence'];
+        }
+
+        return this.requestObservers['new_occurrence'] = Observable.create((observer: Observer<any>) => {
+            this.events.subscribe('socket-message:new_occurrence', (data: any) => {
+                this.occurrences.unshift(data.occurrence);
+                observer.next(data.occurrence);
+            });
         });
     }
 
@@ -141,6 +178,7 @@ export class AppControllerService {
             }
 
             this.events.subscribe('socket-message:joined_entrace', (data: any) => {
+                this.watchingEntraces.push(entraceId);
                 resolve(data.id);
                 this.events.unsubscribe('socket-message:joined_entrace');
             });
@@ -157,12 +195,18 @@ export class AppControllerService {
             }
 
             this.events.subscribe('socket-message:leaved_entrace', () => {
+                this.watchingEntraces.splice(this.watchingEntraces.indexOf(entraceId), 1);
                 resolve();
                 this.events.unsubscribe('socket-message:leaved_entrace');
             });
 
             this.sendMessageToSocket('leave_entrace', {entrace_id: entraceId});
         });
+    }
+
+    /*---------------------------------  UTILS  ---------------------------------*/
+    public getImageUrlForIdentifier(identifier: string): string {
+        return 'http://' + this.serviceUrl + '/img/' + identifier + '.jpg';
     }
 
     /*--------------------------------- Storage ---------------------------------*/

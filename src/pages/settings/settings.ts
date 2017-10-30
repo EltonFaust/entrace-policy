@@ -25,13 +25,13 @@ export class SettingsPage implements OnInit {
         let values = this.initialForm.value;
         this.isSendingForm = true;
 
-        this.appController.setSocketUrl(values.service_url);
+        this.appController.setServiceUrl(values.service_url);
         this.appController.setCurrentUser({id: values.user_id, name: values.user_name});
         this.appController.setStored('saved_config', {service_url: values.service_url, user_id: values.user_id, user_name: values.user_name});
 
         this.appController.checkSocketConnection().then(() => {
-            this.appController.requireListOfEntraces();
             this.viewCtrl.dismiss();
+            this.appController.requireListOfEntraces();
         }).catch((reason: string) => {
             console.log(reason);
             this.socketError = reason;
@@ -55,6 +55,6 @@ export class SettingsPage implements OnInit {
                     [Validators.required, Validators.minLength(5), Validators.maxLength(30)],
                 ],
             });
-        }, {service_url: 'ws://192.168.1.103:3000', user_id: '2815e56a615b7d4c919a53ec3ea066ce', user_name: 'Elton Faust'});
+        }, {service_url: '192.168.1.103:3000', user_id: '2815e56a615b7d4c919a53ec3ea066ce', user_name: 'Elton Faust'});
     }
 }
