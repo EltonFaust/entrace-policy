@@ -8,4 +8,13 @@ page-new-occurrence {
             height: 200px;
         }
     }
+
+    .occurrence-actions {
+         overflow: hidden;
+
+        .occurrence-action {
+            float: left;
+            width: 50%;
+        }
+    }
 }

@@ -10,10 +10,14 @@ export class NewOccurrencePage implements OnInit {
     public occurrenceData: any;
     public hasAction: boolean = false;
 
-    public constructor(public navCtrl: NavController, private navParams: NavParams) {}
+    public constructor(private navCtrl: NavController, private navParams: NavParams) {}
 
-    ionViewDidLoad() {
-        console.log('ionViewDidLoad NewOccurrencePage');
+    public releaseOccurrence(id: number): void {
+        this.navCtrl.pop();
+    }
+
+    public blockOccurrence(id: number): void {
+        this.navCtrl.pop();
     }
 
     ngOnInit() {

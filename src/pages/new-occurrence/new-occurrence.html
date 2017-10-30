@@ -14,4 +14,11 @@
     <p>Documento: {{ occurrenceData.person_identifier }}</p>
     <p>Delito:</p>
     <div>{{ occurrenceData.fault_desc }}</div>
+
+    <template *ngIf="hasAction">
+        <div class="occurrence-actions">
+            <div class="occurrence-action"><button ion-button block color="dark" (click)="releaseOccurrence(occurrenceData.id)">Liberado</button></div>
+            <div class="occurrence-action"><button ion-button block color="danger" (click)="blickOccurrence(occurrenceData.id)">Impedido</button></div>
+        </div>
+    </template>
 </ion-content>

@@ -10,12 +10,14 @@
             <h2>{{ entrace.name }}</h2>
             <p># {{ entrace.id }}</p>
 
-            <button [hidden]="isJoinedEntrace(entrace.id)" ion-button clear item-end (click)="joinEntrace(entrace.id)" color="danger">
-                <ion-icon name="eye-off"></ion-icon>
+            <button [hidden]="isJoinedEntrace(entrace.id)" ion-button clear item-end icon-left (click)="joinEntrace(entrace.id)">
+                <ion-icon name="eye"></ion-icon>
+                Monitorar
             </button>
 
-            <button [hidden]="!isJoinedEntrace(entrace.id)" ion-button clear item-end (click)="leaveEntrace(entrace.id)">
-                <ion-icon name="eye"></ion-icon>
+            <button [hidden]="!isJoinedEntrace(entrace.id)" ion-button clear item-end icon-left (click)="leaveEntrace(entrace.id)" color="danger">
+                <ion-icon name="eye-off"></ion-icon>
+                Não monitorar
             </button>
         </ion-item>
     </ion-list>
