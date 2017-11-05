@@ -26,7 +26,7 @@ export class SettingsPage implements OnInit {
         this.isSendingForm = true;
 
         this.appController.setServiceUrl(values.service_url);
-        this.appController.setCurrentUser({id: values.user_id, name: values.user_name});
+        this.appController.setCurrentUser({id: values.user_id});
         this.appController.setStored('saved_config', {service_url: values.service_url, user_id: values.user_id, user_name: values.user_name});
 
         this.appController.checkSocketConnection().then(() => {
@@ -48,13 +48,9 @@ export class SettingsPage implements OnInit {
                 ],
                 user_id: [
                     saved_config.user_id,
-                    [Validators.required, Validators.minLength(32), Validators.maxLength(32)],
-                ],
-                user_name: [
-                    saved_config.user_name,
-                    [Validators.required, Validators.minLength(5), Validators.maxLength(30)],
+                    [Validators.required, Validators.minLength(3), Validators.maxLength(32)],
                 ],
             });
-        }, {service_url: '192.168.1.103:3000', user_id: '2815e56a615b7d4c919a53ec3ea066ce', user_name: 'Elton Faust'});
+        }, {service_url: '192.168.1.103:3000', user_id: 'elton_faust'});
     }
 }

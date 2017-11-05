@@ -16,7 +16,7 @@ export class AppControllerService {
     // private socketHandle: WS;
     private socketHandle: WebSocket;
 
-    private user: {id: string, name: string};
+    private user: any;
     private entraces: Array<any>;
     private occurrences: Array<any>;
     private watchingEntraces: Array<any>;
@@ -33,7 +33,7 @@ export class AppControllerService {
         this.isDevicePlatform = !this.platform.is('core');
         this.bindStoreChange = {};
 
-        this.user = {id: '#unknown#', name: 'Unknown'};
+        this.user = {id: null, name: 'Unknown'};
         this.entraces = new Array<any>();
         this.occurrences = new Array<any>();
         this.watchingEntraces = new Array<string>();
@@ -66,8 +66,6 @@ export class AppControllerService {
                 return;
             }
 
-            // this.socketHandle = new WS(this.serviceUrl);
-
             this.socketHandle = new WebSocket('ws://' + this.serviceUrl);
 
             this.socketHandle.onerror = (e) => {
@@ -77,8 +75,23 @@ export class AppControllerService {
             }
 
             this.socketHandle.onopen = () => {
-                this.sendMessageToSocket('identify_as', {name: this.user.name});
-                resolve();
+                new Promise<Array<any>>((resolve: (data: any) => any) => {
+                    this.events.subscribe('socket-message:login_response', (data: any) => {
+                        resolve(data);
+                        this.events.unsubscribe('socket-message:login_response');
+                    });
+
+                    this.sendMessageToSocket('try_login');
+                }).then((data: any) => {
+                    if (data.success) {
+                        this.user = data.userData;
+
+                        resolve();
+                    } else {
+                        this.disconnectSocket();
+                        reject('Invalid login');
+                    }
+                });
             };
 
             this.socketHandle.onmessage = (message) => {
@@ -141,9 +154,29 @@ export class AppControllerService {
         });
     }
 
+    public watchForEntraceUpdate(): Observable<any> {
+        if (!!this.requestObservers['entrace_update']) {
+            return this.requestObservers['entrace_update'];
+        }
+
+        return this.requestObservers['entrace_update'] = Observable.create((observer: Observer<any>) => {
+            this.events.subscribe('socket-message:entrace_update', (data: any) => {
+                this.entraces.every((entrace: any, idx: number) => {
+                    if (entrace.id == data.entrace.id) {
+                        this.entraces[idx] = data.entrace;
+                        observer.next(data.entrace);
+                        return false;
+                    }
+
+                    return true;
+                })
+            });
+        });
+    }
+
     public requireListOfOccurrences(): Promise<Array<any>> {
         if (!!this.requestPromises['list_occurrences']) {
-            return this.requestPromises['list_entraces'];
+            return this.requestPromises['list_occurrences'];
         }
 
         return this.requestPromises['list_occurrences'] = new Promise<Array<any>>((resolve: (data: Array<any>) => any) => {
@@ -206,7 +239,11 @@ export class AppControllerService {
 
     /*---------------------------------  UTILS  ---------------------------------*/
     public getImageUrlForIdentifier(identifier: string): string {
-        return 'http://' + this.serviceUrl + '/img/' + identifier + '.jpg';
+        return 'http://' + this.serviceUrl + '/person/' + identifier + '.jpg';
+    }
+
+    public getImageUrlForOccurrence(id: number): string {
+        return 'http://' + this.serviceUrl + '/occurrences/' + id + '.jpg';
     }
 
     /*--------------------------------- Storage ---------------------------------*/

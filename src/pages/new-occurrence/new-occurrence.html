@@ -5,20 +5,25 @@
 </ion-header>
 
 <ion-content>
-    <div class="image-compare-block">
-        <div class="image-item" [style.background-image]=""></div>
-        <div class="image-item" [style.background-image]=""></div>
-    </div>
-    <h3>{{ Informações }}</h3>
-    <p>Nome: {{ occurrenceData.person_name }}</p>
-    <p>Documento: {{ occurrenceData.person_identifier }}</p>
-    <p>Delito:</p>
-    <div>{{ occurrenceData.fault_desc }}</div>
-
-    <template *ngIf="hasAction">
-        <div class="occurrence-actions">
-            <div class="occurrence-action"><button ion-button block color="dark" (click)="releaseOccurrence(occurrenceData.id)">Liberado</button></div>
-            <div class="occurrence-action"><button ion-button block color="danger" (click)="blickOccurrence(occurrenceData.id)">Impedido</button></div>
+    <template *ngIf="occurrenceData">
+        <div class="image-compare-block">
+            <div class="image-item" [style.background-image]="personImage"></div>
+            <div class="image-item" [style.background-image]="occurrenceImage"></div>
         </div>
+        <h3>Informações {{ entrace ? entrace.name : '' }}</h3>
+        <p>Nome: {{ occurrenceData.person_name }}</p>
+        <p>Documento: {{ occurrenceData.person_identifier }}</p>
+        <p>Delito:</p>
+        <div>{{ occurrenceData.fault_desc }}</div>
+
+        <template *ngIf="hasAction && entrace">
+            <button ion-button *ngIf="entrace.isBlocked" block color="dark" (click)="openEntrace()">Abrir para avaliaçao</button>
+            <button ion-button *ngIf="!entrace.isBlocked" block color="success" (click)="closeEntrace()">Liberar entrada</button>
+
+            <div class="occurrence-actions">
+                <div class="occurrence-action"><button ion-button block color="dark" (click)="releaseOccurrence(occurrenceData.id)">Liberado</button></div>
+                <div class="occurrence-action"><button ion-button block color="danger" (click)="blickOccurrence(occurrenceData.id)">Impedido</button></div>
+            </div>
+        </template>
     </template>
 </ion-content>

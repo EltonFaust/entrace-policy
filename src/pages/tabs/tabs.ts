@@ -39,6 +39,10 @@ export class TabsPage implements OnInit {
                     occurrenceModal.present();
                 }
             });
+
+            this.appController.watchForEntraceUpdate().subscribe((entrace) => {
+                console.log('entrace changed', entrace);
+            });
         });
 
         settingsModal.present();

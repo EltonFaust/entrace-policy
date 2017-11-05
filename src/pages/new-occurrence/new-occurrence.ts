@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 
+import { AppControllerService } from '../../services/app-controller-service';
+
 @Component({
     selector: 'page-new-occurrence',
     templateUrl: 'new-occurrence.html',
@@ -10,7 +12,42 @@ export class NewOccurrencePage implements OnInit {
     public occurrenceData: any;
     public hasAction: boolean = false;
 
-    public constructor(private navCtrl: NavController, private navParams: NavParams) {}
+    public constructor(private navCtrl: NavController, private navParams: NavParams, private appController: AppControllerService) {}
+
+    get entrace() {
+        if (!this.occurrenceData) {
+            return null;
+        }
+
+        let currentEntrace = null;
+
+        this.appController.getListOfEntraces().every((entrace) => {
+            if (entrace.id == this.occurrenceData.entrace_id) {
+                currentEntrace = entrace;
+                return false;
+            }
+
+            return true;
+        });
+
+        return currentEntrace;
+    }
+
+    get personImage() {
+        if (!this.occurrenceData) {
+            return null;
+        }
+
+        return this.appController.getImageUrlForIdentifier(this.occurrenceData.person_identifier);
+    }
+
+    get occurrenceImage() {
+        if (!this.occurrenceData) {
+            return null;
+        }
+
+        return this.appController.getImageUrlForOccurrence(this.occurrenceData.id);
+    }
 
     public releaseOccurrence(id: number): void {
         this.navCtrl.pop();
