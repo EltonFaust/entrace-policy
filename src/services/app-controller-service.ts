@@ -237,6 +237,14 @@ export class AppControllerService {
         });
     }
 
+    public requireOpenEntrace(entraceId: string): void {
+        this.sendMessageToSocket('open_entrace', {entrace_id: entraceId});
+    }
+
+    public requireClosenEntrace(entraceId: string): void {
+        this.sendMessageToSocket('close_entrace', {entrace_id: entraceId});
+    }
+
     /*---------------------------------  UTILS  ---------------------------------*/
     public getImageUrlForIdentifier(identifier: string): string {
         return 'http://' + this.serviceUrl + '/person/' + identifier + '.jpg';

@@ -57,6 +57,14 @@ export class NewOccurrencePage implements OnInit {
         this.navCtrl.pop();
     }
 
+    public openEntrace(): void {
+        this.appController.requireOpenEntrace(this.entrace.id);
+    }
+
+    public closeEntrace(): void {
+        this.appController.requireClosenEntrace(this.entrace.id);
+    }
+
     ngOnInit() {
         this.occurrenceData = this.navParams.get('occurrence');
         this.hasAction = !!this.navParams.get('hasAction');
