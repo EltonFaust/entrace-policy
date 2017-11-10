@@ -11,6 +11,7 @@ import { AppControllerService } from '../services/app-controller-service';
 import { MyApp } from './app.component';
 import { ListOfEntracesPage } from '../pages/list-of-entraces/list-of-entraces';
 import { ListOfOccurrencesPage } from '../pages/list-of-occurrences/list-of-occurrences';
+import { NewOccurrencePage } from '../pages/new-occurrence/new-occurrence';
 import { TabsPage } from '../pages/tabs/tabs';
 import { SettingsPage } from '../pages/settings/settings';
 
@@ -18,9 +19,10 @@ import { SettingsPage } from '../pages/settings/settings';
     declarations: [
         MyApp,
         SettingsPage,
+        TabsPage,
         ListOfEntracesPage,
         ListOfOccurrencesPage,
-        TabsPage
+        NewOccurrencePage
     ],
     imports: [
         BrowserModule,
@@ -30,9 +32,10 @@ import { SettingsPage } from '../pages/settings/settings';
     entryComponents: [
         MyApp,
         SettingsPage,
+        TabsPage,
         ListOfEntracesPage,
         ListOfOccurrencesPage,
-        TabsPage
+        NewOccurrencePage
     ],
     providers: [
         {provide: ErrorHandler, useClass: IonicErrorHandler},

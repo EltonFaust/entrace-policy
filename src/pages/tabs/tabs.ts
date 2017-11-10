@@ -43,6 +43,10 @@ export class TabsPage implements OnInit {
             this.appController.watchForEntraceUpdate().subscribe((entrace) => {
                 console.log('entrace changed', entrace);
             });
+
+            this.appController.watchForOccurrenceUpdate().subscribe((occurrence) => {
+                console.log('occurrence changed', occurrence);
+            })
         });
 
         settingsModal.present();

@@ -5,11 +5,23 @@
 
 </ion-header>
 
-<ion-content padding>
+<ion-content>
     <ion-list *ngIf="occurences && occurences.length > 0">
-        <ion-item *ngFor="let occurence of occurences">
-            {{ occurence.value }}
-        </ion-item>
+        <ion-item-sliding *ngFor="let occurence of occurences">
+            <ion-item>
+                <ion-thumbnail item-start>
+                    <img [src]="getIdentifierOccurrence(occurence.id)">
+                </ion-thumbnail>
+
+                <h2>{{ occurence.person_name }}</h2>
+                <p># {{ occurence.id }}</p>
+            </ion-item>
+            <ion-item-options side="right">
+                <button ion-button color="primary" (click)="viewOccurrence(occurence)">
+                    <ion-icon name="information-circle"></ion-icon> Ver
+                </button>
+            </ion-item-options>
+        </ion-item-sliding>
     </ion-list>
     <div class="center-content occurences-empty-list" *ngIf="!occurences || occurences.length == 0">
         <div class="content-container">

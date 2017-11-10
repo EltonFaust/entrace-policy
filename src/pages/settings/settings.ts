@@ -32,6 +32,7 @@ export class SettingsPage implements OnInit {
         this.appController.checkSocketConnection().then(() => {
             this.viewCtrl.dismiss();
             this.appController.requireListOfEntraces();
+            this.appController.requireListOfOccurrences();
         }).catch((reason: string) => {
             console.log(reason);
             this.socketError = reason;
@@ -51,6 +52,6 @@ export class SettingsPage implements OnInit {
                     [Validators.required, Validators.minLength(3), Validators.maxLength(32)],
                 ],
             });
-        }, {service_url: '192.168.1.103:3000', user_id: 'elton_faust'});
+        }, {service_url: '192.168.1.104:3000', user_id: 'elton_faust'});
     }
 }

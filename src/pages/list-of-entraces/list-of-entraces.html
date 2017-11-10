@@ -11,12 +11,12 @@
             <p># {{ entrace.id }}</p>
 
             <button [hidden]="isJoinedEntrace(entrace.id)" ion-button clear item-end icon-left (click)="joinEntrace(entrace.id)">
-                <ion-icon name="eye"></ion-icon>
+                <ion-icon name="notifications"></ion-icon>
                 Monitorar
             </button>
 
             <button [hidden]="!isJoinedEntrace(entrace.id)" ion-button clear item-end icon-left (click)="leaveEntrace(entrace.id)" color="danger">
-                <ion-icon name="eye-off"></ion-icon>
+                <ion-icon name="notifications-off"></ion-icon>
                 Não monitorar
             </button>
         </ion-item>

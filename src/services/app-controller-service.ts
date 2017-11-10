@@ -1,4 +1,4 @@
-import { Injectable /*, NgZone*/ } from '@angular/core';
+import { Injectable , NgZone } from '@angular/core';
 import { Platform, Events } from 'ionic-angular';
 
 import { Observable, Observer } from 'rxjs/Rx';
@@ -25,7 +25,7 @@ export class AppControllerService {
     private requestObservers: {[id: string]: Observable<any>};
 
     public constructor(
-        // private ngZone: NgZone,
+        private ngZone: NgZone,
         private platform: Platform,
         private nativeStorage: NativeStorage,
         private events: Events
@@ -145,7 +145,10 @@ export class AppControllerService {
 
         return this.requestPromises['list_entraces'] = new Promise<Array<any>>((resolve: (data: Array<any>) => any) => {
             this.events.subscribe('socket-message:list_of_entraces', (data: any) => {
-                this.entraces = data.list;
+                this.ngZone.run(() => {
+                    this.entraces = data.list;
+                });
+
                 resolve(data.list);
                 this.events.unsubscribe('socket-message:list_of_entraces');
             });
@@ -163,15 +166,22 @@ export class AppControllerService {
             this.events.subscribe('socket-message:entrace_update', (data: any) => {
                 this.entraces.every((entrace: any, idx: number) => {
                     if (entrace.id == data.entrace.id) {
-                        this.entraces[idx] = data.entrace;
+                        this.ngZone.run(() => {
+                            this.entraces[idx] = data.entrace;
+                        });
+
                         observer.next(data.entrace);
                         return false;
                     }
 
                     return true;
-                })
+                });
             });
         });
+    }
+
+    public getListOfOccurrences(): Array<any> {
+        return this.occurrences;
     }
 
     public requireListOfOccurrences(): Promise<Array<any>> {
@@ -181,7 +191,10 @@ export class AppControllerService {
 
         return this.requestPromises['list_occurrences'] = new Promise<Array<any>>((resolve: (data: Array<any>) => any) => {
             this.events.subscribe('socket-message:list_of_occurrences', (data: any) => {
-                this.occurrences = data.list;
+                this.ngZone.run(() => {
+                    this.occurrences = data.list;
+                });
+
                 resolve(data.list);
                 this.events.unsubscribe('socket-message:list_of_occurrences');
             });
@@ -197,10 +210,40 @@ export class AppControllerService {
 
         return this.requestObservers['new_occurrence'] = Observable.create((observer: Observer<any>) => {
             this.events.subscribe('socket-message:new_occurrence', (data: any) => {
-                this.occurrences.unshift(data.occurrence);
+                this.ngZone.run(() => {
+                    this.occurrences.unshift(data.occurrence);
+                });
+
                 observer.next(data.occurrence);
             });
         });
+    }
+
+    public watchForOccurrenceUpdate(): Observable<any> {
+        if (!!this.requestObservers['occurrence_update']) {
+            return this.requestObservers['occurrence_update'];
+        }
+
+        return this.requestObservers['occurrence_update'] = Observable.create((observer: Observer<any>) => {
+            this.events.subscribe('socket-message:occurrence_update', (data: any) => {
+                this.occurrences.every((occurrence: any, idx: number) => {
+                    if (occurrence.id == data.occurrence.id) {
+                        this.ngZone.run(() => {
+                            this.occurrences[idx] = data.occurrence;
+                        });
+
+                        observer.next(data.occurrence);
+                        return false;
+                    }
+
+                    return true;
+                });
+            });
+        });
+    }
+
+    public setOccurrenceStatus(occurenceId, status: number, statusMessage): void {
+        this.sendMessageToSocket('set_occurence_status', {occurence_id: occurenceId, status, status_message: statusMessage});
     }
 
     public requireJoinEntrace(entraceId: string): Promise<any> {
@@ -211,7 +254,10 @@ export class AppControllerService {
             }
 
             this.events.subscribe('socket-message:joined_entrace', (data: any) => {
-                this.watchingEntraces.push(entraceId);
+                this.ngZone.run(() => {
+                    this.watchingEntraces.push(entraceId);
+                });
+
                 resolve(data.id);
                 this.events.unsubscribe('socket-message:joined_entrace');
             });
@@ -228,7 +274,10 @@ export class AppControllerService {
             }
 
             this.events.subscribe('socket-message:leaved_entrace', () => {
-                this.watchingEntraces.splice(this.watchingEntraces.indexOf(entraceId), 1);
+                this.ngZone.run(() => {
+                    this.watchingEntraces.splice(this.watchingEntraces.indexOf(entraceId), 1);
+                });
+
                 resolve();
                 this.events.unsubscribe('socket-message:leaved_entrace');
             });

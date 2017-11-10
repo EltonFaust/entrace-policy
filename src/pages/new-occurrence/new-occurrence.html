@@ -5,25 +5,29 @@
 </ion-header>
 
 <ion-content>
-    <template *ngIf="occurrenceData">
+    <ng-container *ngIf="!!occurrenceData">
         <div class="image-compare-block">
-            <div class="image-item" [style.background-image]="personImage"></div>
-            <div class="image-item" [style.background-image]="occurrenceImage"></div>
+            <div class="image-item" [style.background-image]="'url(' + personImage + ')'"></div>
+            <div class="image-item" [style.background-image]="'url(' + occurrenceImage + ')'"></div>
         </div>
-        <h3>Informações {{ entrace ? entrace.name : '' }}</h3>
-        <p>Nome: {{ occurrenceData.person_name }}</p>
-        <p>Documento: {{ occurrenceData.person_identifier }}</p>
-        <p>Delito:</p>
-        <div>{{ occurrenceData.fault_desc }}</div>
-
-        <template *ngIf="hasAction && entrace">
-            <button ion-button *ngIf="entrace.isBlocked" block color="dark" (click)="openEntrace()">Abrir para avaliaçao</button>
-            <button ion-button *ngIf="!entrace.isBlocked" block color="success" (click)="closeEntrace()">Liberar entrada</button>
-
-            <div class="occurrence-actions">
-                <div class="occurrence-action"><button ion-button block color="dark" (click)="releaseOccurrence(occurrenceData.id)">Liberado</button></div>
-                <div class="occurrence-action"><button ion-button block color="danger" (click)="blickOccurrence(occurrenceData.id)">Impedido</button></div>
+        <div padding>
+            <h4>{{ entrace ? entrace.name : '' }}</h4>
+            <div padding-bottom>
+                <div><b>Nome:</b> {{ occurrenceData.person_name }}</div>
+                <div><b>Documento:</b> {{ occurrenceData.person_identifier }}</div>
+                <div><b>Delito:</b></div>
+                <div>{{ occurrenceData.fault_desc }}</div>
             </div>
-        </template>
-    </template>
+
+            <ng-container *ngIf="hasAction && entrace && occurrenceData.status == 0">
+                <button ion-button *ngIf="entrace.isBlocked" block color="dark" (click)="openEntrace()">Abrir entrada para avaliaçao</button>
+                <button ion-button *ngIf="!entrace.isBlocked" block color="success" (click)="closeEntrace()">Liberar entrada</button>
+
+                <div class="occurrence-actions">
+                    <div class="occurrence-action" padding-right><button ion-button block color="dark" (click)="releaseOccurrence()">Liberado</button></div>
+                    <div class="occurrence-action" padding-left><button ion-button block color="danger" (click)="blockOccurrence()">Impedido</button></div>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
 </ion-content>

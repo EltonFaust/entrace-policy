@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { AppControllerService } from '../../services/app-controller-service';
 
@@ -6,15 +6,19 @@ import { AppControllerService } from '../../services/app-controller-service';
     selector: 'page-list-of-occurrences',
     templateUrl: 'list-of-occurrences.html',
 })
-export class ListOfOccurrencesPage implements OnInit {
+export class ListOfOccurrencesPage {
 
-    public occurences: Array<any>;
+    public constructor(private appController: AppControllerService) {}
 
-    public constructor(private appController: AppControllerService) {
-        this.occurences = new Array<any>();
+    public get occurences() {
+        return this.appController.getListOfOccurrences();
     }
 
-    ngOnInit() {
-        // this.appController.connectToCurrentSocketUrl();
+    public getIdentifierImage(identifier: string): string {
+        return this.appController.getImageUrlForIdentifier(identifier);
+    }
+
+    public getIdentifierOccurrence(id: number): string {
+        return this.appController.getImageUrlForOccurrence(id);
     }
 }
