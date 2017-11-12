@@ -243,7 +243,7 @@ export class AppControllerService {
     }
 
     public setOccurrenceStatus(occurenceId, status: number, statusMessage): void {
-        this.sendMessageToSocket('set_occurence_status', {occurence_id: occurenceId, status, status_message: statusMessage});
+        this.sendMessageToSocket('set_occurence_status', {occurrence_id: occurenceId, status, status_message: statusMessage});
     }
 
     public requireJoinEntrace(entraceId: string): Promise<any> {
@@ -290,8 +290,16 @@ export class AppControllerService {
         this.sendMessageToSocket('open_entrace', {entrace_id: entraceId});
     }
 
-    public requireClosenEntrace(entraceId: string): void {
+    public requireCloseEntrace(entraceId: string): void {
         this.sendMessageToSocket('close_entrace', {entrace_id: entraceId});
+    }
+
+    public requireStartReceiveEntrace(entraceId: string): void {
+        this.sendMessageToSocket('start_receive', {entrace_id: entraceId});
+    }
+
+    public requireStopReceiveEntrace(entraceId: string): void {
+        this.sendMessageToSocket('stop_receive', {entrace_id: entraceId});
     }
 
     /*---------------------------------  UTILS  ---------------------------------*/

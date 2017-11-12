@@ -8,16 +8,22 @@
     <ion-list *ngIf="entracesList">
         <ion-item *ngFor="let entrace of entracesList">
             <h2>{{ entrace.name }}</h2>
-            <p># {{ entrace.id }}</p>
+            <p>Identificador #{{ entrace.id }}</p>
+
+            <button [hidden]="!isJoinedEntrace(entrace.id) || entrace.isReceiving" ion-button clear item-end icon-left (click)="startReceive(entrace.id)" color="success">
+                <ion-icon name="exit"></ion-icon>
+            </button>
+
+            <button [hidden]="!isJoinedEntrace(entrace.id) || !entrace.isReceiving" ion-button clear item-end icon-left (click)="stopReceive(entrace.id)" color="danger">
+                <ion-icon name="exit"></ion-icon>
+            </button>
 
             <button [hidden]="isJoinedEntrace(entrace.id)" ion-button clear item-end icon-left (click)="joinEntrace(entrace.id)">
                 <ion-icon name="notifications"></ion-icon>
-                Monitorar
             </button>
 
             <button [hidden]="!isJoinedEntrace(entrace.id)" ion-button clear item-end icon-left (click)="leaveEntrace(entrace.id)" color="danger">
                 <ion-icon name="notifications-off"></ion-icon>
-                Não monitorar
             </button>
         </ion-item>
     </ion-list>

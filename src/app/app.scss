@@ -34,3 +34,20 @@
         }
     }
 }
+
+.text-primary {color: #{color($colors, primary)} !important};
+.text-secondary {color: #{color($colors, secondary)} !important};
+.text-danger {color: #{color($colors, danger)} !important};
+.text-light {color: #{color($colors, light)} !important};
+.text-dark {color: #{color($colors, dark)} !important};
+.text-success {color: #{color($colors, success)} !important};
+
+// $colors: (
+//     primary:    #488aff,
+//     secondary:  #32db64,
+//     danger:     #f53d3d,
+//     light:      #f4f4f4,
+//     dark:       #222,
+//     bg:         #488aff,
+//     success:    #5cb85c
+// );

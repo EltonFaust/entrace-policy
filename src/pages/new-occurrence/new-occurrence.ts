@@ -14,9 +14,11 @@ export class NewOccurrencePage implements OnInit {
 
     public occurrenceData: any;
     public hasAction: boolean = false;
+    public hasProcessed: boolean = false;
+    public hasLiberatedReceive: boolean = false;
 
     public constructor(
-        private navCtrl: NavController,
+        public navCtrl: NavController,
         private navParams: NavParams,
         private alertCtrl: AlertController,
         private actionSheetCtrl: ActionSheetController,
@@ -111,7 +113,7 @@ export class NewOccurrencePage implements OnInit {
     public blockOccurrence(): void {
         this.alertCtrl.create({
             title: 'Confirma?',
-            message: 'Identificação correta e impedito de entrar?',
+            message: 'Identificação correta e impedido de entrar',
             buttons: [
                 {
                     text: 'Cancelar',
@@ -135,7 +137,30 @@ export class NewOccurrencePage implements OnInit {
     }
 
     public closeEntrace(): void {
-        this.appController.requireClosenEntrace(this.entrace.id);
+        this.hasProcessed = true
+        this.appController.requireCloseEntrace(this.entrace.id);
+    }
+
+    public releaseReceive(): void {
+        this.alertCtrl.create({
+            title: 'Confirma?',
+            message: 'Liberar novos acessos',
+            buttons: [
+                {
+                    text: 'Cancelar',
+                    handler: () => {
+                        console.log('Cancel clicked')
+                    }
+                },
+                {
+                    text: 'Confirmar',
+                    handler: () => {
+                        this.hasLiberatedReceive = true;
+                        this.appController.requireStartReceiveEntrace(this.entrace.id);
+                    }
+                }
+            ]
+        }).present();
     }
 
     ngOnInit() {

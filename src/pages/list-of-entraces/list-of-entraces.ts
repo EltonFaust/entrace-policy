@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+
+import { AlertController } from 'ionic-angular';
 
 import { AppControllerService } from '../../services/app-controller-service';
 
@@ -6,8 +8,8 @@ import { AppControllerService } from '../../services/app-controller-service';
     selector: 'page-list-of-entraces',
     templateUrl: 'list-of-entraces.html',
 })
-export class ListOfEntracesPage implements OnInit {
-    public constructor(private appController: AppControllerService) {}
+export class ListOfEntracesPage {
+    public constructor(private alertCtrl: AlertController, private appController: AppControllerService) {}
 
     get entracesList(): Array<any> {
         return this.appController.getListOfEntraces();
@@ -33,7 +35,45 @@ export class ListOfEntracesPage implements OnInit {
         });
     }
 
-    ngOnInit() {
+    public startReceive(entraceId: string): void {
+        this.alertCtrl.create({
+            title: 'Confirma?',
+            message: 'Liberar novos acessos',
+            buttons: [
+                {
+                    text: 'Cancelar',
+                    handler: () => {
+                        console.log('Cancel clicked')
+                    }
+                },
+                {
+                    text: 'Confirmar',
+                    handler: () => {
+                        this.appController.requireStartReceiveEntrace(entraceId);
+                    }
+                }
+            ]
+        }).present();
+    }
 
+    public stopReceive(entraceId: string): void {
+        this.alertCtrl.create({
+            title: 'Confirma?',
+            message: 'Bloquear novos acessos',
+            buttons: [
+                {
+                    text: 'Cancelar',
+                    handler: () => {
+                        console.log('Cancel clicked')
+                    }
+                },
+                {
+                    text: 'Confirmar',
+                    handler: () => {
+                        this.appController.requireStopReceiveEntrace(entraceId);
+                    }
+                }
+            ]
+        }).present();
     }
 }

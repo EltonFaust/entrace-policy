@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
+import { ModalController } from 'ionic-angular';
 
 import { AppControllerService } from '../../services/app-controller-service';
+
+import { NewOccurrencePage } from '../new-occurrence/new-occurrence';
 
 @Component({
     selector: 'page-list-of-occurrences',
@@ -8,9 +11,9 @@ import { AppControllerService } from '../../services/app-controller-service';
 })
 export class ListOfOccurrencesPage {
 
-    public constructor(private appController: AppControllerService) {}
+    public constructor(private modalCtrl: ModalController, private appController: AppControllerService) {}
 
-    public get occurences() {
+    public get occurrences() {
         return this.appController.getListOfOccurrences();
     }
 
@@ -20,5 +23,9 @@ export class ListOfOccurrencesPage {
 
     public getIdentifierOccurrence(id: number): string {
         return this.appController.getImageUrlForOccurrence(id);
+    }
+
+    public viewOccurrence(occurrence): void {
+        this.modalCtrl.create(NewOccurrencePage, {occurrence, hasAction: false}, {enableBackdropDismiss: true}).present();
     }
 }

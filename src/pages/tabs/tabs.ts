@@ -35,8 +35,7 @@ export class TabsPage implements OnInit {
 
                 if (this.appController.isJoinedEntrace(occurrence.entrace_id)) {
                     // treta foi na entrada que o usuario da vinculado
-                    let occurrenceModal = this.modalCtrl.create(NewOccurrencePage, {occurrence: occurrence, hasAction: true}, {enableBackdropDismiss: false});
-                    occurrenceModal.present();
+                    this.modalCtrl.create(NewOccurrencePage, {occurrence: occurrence, hasAction: true}, {enableBackdropDismiss: false}).present();
                 }
             });
 

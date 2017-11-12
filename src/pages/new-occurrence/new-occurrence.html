@@ -1,16 +1,33 @@
 <ion-header>
     <ion-navbar>
-        <ion-title>Potencial transgressor identificado</ion-title>
+        <ion-title>{{ (hasAction ? 'Nova ocorrência' : 'Visualizando ocorrência') + ' (#' + (!!occurrenceData ? occurrenceData.id : '--') + ')' }}</ion-title>
+
+        <ion-buttons end [hidden]="hasAction">
+            <button ion-button icon-only (click)="navCtrl.pop()">
+                <ion-icon name="close"></ion-icon>
+            </button>
+        </ion-buttons>
     </ion-navbar>
 </ion-header>
 
 <ion-content>
     <ng-container *ngIf="!!occurrenceData">
         <div class="image-compare-block">
-            <div class="image-item" [style.background-image]="'url(' + personImage + ')'"></div>
-            <div class="image-item" [style.background-image]="'url(' + occurrenceImage + ')'"></div>
+            <div class="image-item" [style.background-image]="'url(' + personImage + ')'">
+                <div class="image-origin"><div class="origin-label">{{ occurrenceData.person_name }}</div></div>
+            </div>
+            <div class="image-item" [style.background-image]="'url(' + occurrenceImage + ')'">
+                <div class="image-origin"><div class="origin-label">Imagem Capturada</div></div>
+            </div>
         </div>
         <div padding>
+            <ng-container *ngIf="!hasAction || occurrenceData.status != 0">
+                <h4 [class.text-success]="occurrenceData.status == 1" [class.text-danger]="occurrenceData.status == 2">
+                    {{ occurrenceData.status == 1 ? 'Liberado' : 'Impedido' }}
+                </h4>
+                <p>{{ occurrenceData.status_message }}</p>
+            </ng-container>
+
             <h4>{{ entrace ? entrace.name : '' }}</h4>
             <div padding-bottom>
                 <div><b>Nome:</b> {{ occurrenceData.person_name }}</div>
@@ -20,13 +37,19 @@
             </div>
 
             <ng-container *ngIf="hasAction && entrace && occurrenceData.status == 0">
-                <button ion-button *ngIf="entrace.isBlocked" block color="dark" (click)="openEntrace()">Abrir entrada para avaliaçao</button>
-                <button ion-button *ngIf="!entrace.isBlocked" block color="success" (click)="closeEntrace()">Liberar entrada</button>
+                <ng-container *ngIf="!hasProcessed">
+                    <button ion-button *ngIf="entrace.isBlocked" block color="dark" (click)="openEntrace()">Abrir entrada para avaliação</button>
+                    <button ion-button *ngIf="!entrace.isBlocked" block color="success" (click)="closeEntrace()">Fechar entrada</button>
+                </ng-container>
 
-                <div class="occurrence-actions">
-                    <div class="occurrence-action" padding-right><button ion-button block color="dark" (click)="releaseOccurrence()">Liberado</button></div>
-                    <div class="occurrence-action" padding-left><button ion-button block color="danger" (click)="blockOccurrence()">Impedido</button></div>
-                </div>
+                <ng-container *ngIf="hasProcessed">
+                    <button ion-button *ngIf="!hasLiberatedReceive && !entrace.isReceiving" block color="danger" (click)="releaseReceive()">Liberar novos acessos</button>
+
+                    <div class="occurrence-actions">
+                        <div class="occurrence-action" padding-right><button ion-button block color="success" (click)="releaseOccurrence()">Liberado</button></div>
+                        <div class="occurrence-action" padding-left><button ion-button block color="danger" (click)="blockOccurrence()">Impedido</button></div>
+                    </div>
+                </ng-container>
             </ng-container>
         </div>
     </ng-container>
